@@ -8,6 +8,13 @@ exports.login = async(req, res) => {
     const cekUsername = await prisma.users.findUnique({
       where: {
         username: req.body.username
+      },
+      include: {
+        karyawan: {
+          include: {
+            jabatan_karyawan: true
+          }
+        }
       }
     })
     if (cekUsername){
@@ -35,7 +42,7 @@ exports.register = async (req, res) => {
     if (cekUsername){
       res.json(response.commonError('Username Telah Terdaftar'))
     }else{
-      bcrypt.hash(req.body.password,10, async(err,hash)=>{
+      bcrypt.hash(req.body.password,10, async(err,hash) => {
         await prisma.users.create({data:{
           ...req.body,
           password:hash,
@@ -50,6 +57,6 @@ exports.register = async (req, res) => {
   }
 }
 
-// export function register(req, res) {
+// export function cekRole(req, res) {
 //   console.log('register')
 // }

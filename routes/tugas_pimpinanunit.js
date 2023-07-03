@@ -9,6 +9,7 @@ router.get('/get/tugas-kepala-biro/:id', tugasController.getTugasForKepalaBiro)
 
 router.put('/update/status/:id', upload.single('hasil_tugas'), tugasController.updateTugas)
 router.get('/update/selesai/:id', tugasController.tugasSelesai)
+router.get('/detail/:id', tugasController.detail)
 
 
 module.exports = router

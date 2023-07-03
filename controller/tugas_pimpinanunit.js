@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const response = require('../helper/ResponsHandler')
+const dateHelper = require('../helper/DateHelper')
 
 exports.inputTugas_pimpinanunit = async (req,res) => {
   try {
@@ -9,7 +10,7 @@ exports.inputTugas_pimpinanunit = async (req,res) => {
         ...data,
         id_kepala_biro: Number(data.id_kepala_biro),
         id_jabatan_pimpinan_unit: Number(data.id_jabatan_pimpinan_unit),
-        deadline: new Date(data.deadline),
+        deadline: dateHelper.addOneDay(data.deadline),
         lampiran: req.file ? req.file.filename : null
       }
     await prisma.master_tugas.create({
@@ -131,5 +132,34 @@ exports.tugasSelesai = async (req, res) => {
   } catch (error) {
     console.log(error)
     res.json(response.serverError())
+  }
+}
+exports.detail = async (req, res) => {
+  try {
+    const data = await prisma.master_tugas.findUnique({
+      where:{
+        id_tugas:Number (req.params.id)
+      },
+      include: {
+        jabatan_karyawan_master_tugas_id_jabatan_pimpinan_unitTojabatan_karyawan: {
+          include:{
+            karyawan: true,
+          }
+        },
+        jabatan_karyawan_master_tugas_id_kepala_biroTojabatan_karyawan:{
+          include:{
+            karyawan: true,
+            unit_kerja_jabatan_karyawan_unit_kerjaTounit_kerja: true
+          }
+        },
+        history_status: true
+
+      }
+    })
+
+    res.json(response.successWithData(data))
+    
+  } catch (error) {
+    console.log(error)
   }
 }

@@ -1,17 +1,32 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 const response = require('../helper/ResponsHandler')
+const dateHelper = require('../helper/DateHelper')
 
 exports.inputKaryawan = async (req,res) => {
   try {
+    const data = req.body
     await prisma.karyawan.create({
       data:{
-        ...req.body, 
-        status: Number(req.body.status),
-        tanggal_lahir: new Date(req.body.tanggal_lahir),
-        tanggal_masuk_kerja: new Date(req.body.tanggal_masuk_kerja)
+        ...data,
+        status: Number(data.status),
+        tanggal_lahir: dateHelper.addOneDay(data.tanggal_lahir),
+        tanggal_masuk_kerja: dateHelper.addOneDay(data.tanggal_masuk_kerja),
+        tgl_pensiun: dateHelper.addOneDay(data.tgl_pensiun),
+        gaji_pokok: Number(data.gaji_pokok)
       }
     }) 
+    // await prisma.kontrak.create({
+    //   data:{
+    //     id_karyawan: karyawan.id_karyawan,
+    //     no_sk: data.no_sk,
+    //     tgl_kontrak: data.tgl_kontrak,
+    //     tgl_habis_kontrak: data.tgl_habis_kontrak,
+    //     jenis_kontrak: data.jenis_kontrak,
+    //     status: data.status
+
+    //   }
+    // })
     res.json(response.commonSuccess())
   } catch (error) {
     console.log(error)
@@ -29,7 +44,8 @@ exports.getKaryawan = async (req,res) =>{
             jabatan: true,
             unit_kerja_jabatan_karyawan_unit_kerjaTounit_kerja: true
           }
-        }
+        },
+        kontrak: true
       }
     })
     // console.log(data)
@@ -109,3 +125,14 @@ exports.getjabatan_Karyawan_by_level = async (req, res) => {
     res.json(response.serverError())
   }
 }
+
+exports.getKategori = async (req, res) => {
+  try {
+    const data = await prisma.kategori_karyawan.findMany()
+    res.json (response.successWithData(data))
+  } catch (error) {
+    console.log(error)
+    res.json(response.serverError())
+  }
+}
+

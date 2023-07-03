@@ -20,6 +20,7 @@ app.use('/status', require('./routes/status'))
 app.use('/karyawan', require('./routes/karyawan'))
 app.use('/jabatan_karyawan', require('./routes/jabatan_karyawan'))
 app.use('/tugas_pimpinanunit', require('./routes/tugas_pimpinanunit'))
+app.use('/kontrak', require('./routes/kontrak'))
 
 app.listen(port, ()=> {
   console.log ('server started')
