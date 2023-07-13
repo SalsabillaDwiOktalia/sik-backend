@@ -45,7 +45,12 @@ exports.getKaryawan = async (req,res) =>{
             unit_kerja_jabatan_karyawan_unit_kerjaTounit_kerja: true
           }
         },
-        kontrak: true
+        kontrak: {
+          where: {
+            status: 1
+          }
+        },
+        kategori_karyawan: true
       }
     })
     // console.log(data)

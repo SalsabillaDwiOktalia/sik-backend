@@ -7,146 +7,139 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model users {
-  username    String    @id @db.VarChar(50)
-  password    String    @db.VarChar(255)
-  level       Int       @default(1) @db.SmallInt
+  username    String   @db.VarChar(50)
+  password    String   @db.VarChar(255)
+  level       Int      @default(1) @db.SmallInt
   id_karyawan BigInt?
-  created_at  DateTime  @default(now()) @db.Timestamp(0)
-  karyawan    karyawan? @relation(fields: [id_karyawan], references: [id_karyawan], onDelete: Restrict, onUpdate: Restrict, map: "users_ibfk_1")
+  created_at  DateTime @default(now()) @db.Timestamp(0)
 
-  @@index([id_karyawan], map: "id_karyawan")
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model jabatan {
-  kode_jabatan      String             @id @db.VarChar(5)
-  nama_jabatan      String             @db.Text
-  level             Int?               @db.MediumInt
+  kode_jabatan      String   @db.VarChar(5)
+  nama_jabatan      String   @db.Text
+  level             Int?     @db.MediumInt
   tunjangan_jabatan Float
-  keterangan        String?            @db.Text
-  route_name        String?            @db.VarChar(100)
-  created_at        DateTime           @default(now()) @db.Timestamp(0)
-  jabatan_karyawan  jabatan_karyawan[]
+  keterangan        String?  @db.Text
+  route_name        String?  @db.VarChar(100)
+  created_at        DateTime @default(now()) @db.Timestamp(0)
+
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model jabatan_karyawan {
-  id_jabatan_karyawan                                                  Int            @id @default(autoincrement())
-  id_jabatan                                                           String         @db.VarChar(5)
-  id_karyawan                                                          BigInt
-  tgl_sk                                                               DateTime       @db.Date
-  no_sk                                                                String         @db.VarChar(50)
-  unit_kerja                                                           Int            @db.MediumInt
-  unit_kerja_jabatan_karyawan_unit_kerjaTounit_kerja                   unit_kerja     @relation("jabatan_karyawan_unit_kerjaTounit_kerja", fields: [unit_kerja], references: [id_unit_kerja], onUpdate: Restrict, map: "jabatan_karyawan_ibfk_1")
-  jabatan                                                              jabatan        @relation(fields: [id_jabatan], references: [kode_jabatan], onUpdate: Restrict, map: "jabatan_karyawan_ibfk_2")
-  karyawan                                                             karyawan       @relation(fields: [id_karyawan], references: [id_karyawan], onUpdate: Restrict, map: "jabatan_karyawan_ibfk_3")
-  master_tugas_master_tugas_id_jabatan_pimpinan_unitTojabatan_karyawan master_tugas[] @relation("master_tugas_id_jabatan_pimpinan_unitTojabatan_karyawan")
-  master_tugas_master_tugas_id_kepala_biroTojabatan_karyawan           master_tugas[] @relation("master_tugas_id_kepala_biroTojabatan_karyawan")
+  id_jabatan_karyawan Int      @default(autoincrement())
+  id_jabatan          String   @db.VarChar(5)
+  id_karyawan         BigInt
+  tgl_sk              DateTime @db.Date
+  no_sk               String   @db.VarChar(50)
+  unit_kerja          Int      @db.MediumInt
 
-  @@index([id_jabatan], map: "id_jabatan")
-  @@index([id_jabatan], map: "id_jabatan_2")
-  @@index([id_karyawan], map: "id_karyawan")
-  @@index([id_karyawan], map: "id_karyawan_2")
-  @@index([unit_kerja], map: "unit_kerja")
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model karyawan {
-  id_karyawan                    BigInt             @id @default(autoincrement())
-  nama_karyawan                  String             @db.VarChar(255)
-  status                         Int                @db.MediumInt
-  nidn                           String?            @db.VarChar(50)
-  tanggal_lahir                  DateTime           @db.Date
-  tanggal_masuk_kerja            DateTime           @db.Date
-  kategori                       Int                @db.MediumInt
-  tgl_pensiun                    DateTime           @default(now()) @db.Date
-  no_tlpn                        String             @db.VarChar(20)
-  nik                            String             @db.Char(16)
-  alamat                         String             @db.Text
-  jenis_kelamin                  String             @db.Char(9)
-  agama                          String             @db.VarChar(25)
-  gaji_pokok                     Float
-  jabatan_karyawan               jabatan_karyawan[]
-  status_karyawan_statusTostatus status             @relation("karyawan_statusTostatus", fields: [status], references: [id_status], onUpdate: Restrict, map: "karyawan_ibfk_1")
-  kategori_karyawan              kategori_karyawan  @relation(fields: [kategori], references: [id_kategori], onUpdate: Restrict, map: "karyawan_ibfk_2")
-  kontrak                        kontrak[]
-  users                          users[]
+  id_karyawan         BigInt   @default(autoincrement())
+  nama_karyawan       String   @db.VarChar(255)
+  status              Int      @db.MediumInt
+  nidn                String?  @db.VarChar(50)
+  tanggal_lahir       DateTime @db.Date
+  tanggal_masuk_kerja DateTime @db.Date
+  kategori            Int      @db.MediumInt
+  tgl_pensiun         DateTime @default(now()) @db.Date
+  no_tlpn             String   @db.VarChar(20)
+  nik                 String   @db.Char(16)
+  alamat              String   @db.Text
+  jenis_kelamin       String   @db.Char(9)
+  agama               String   @db.VarChar(25)
+  gaji_pokok          Float
+  uang_pesangon       Float    @default(0)
+  uang_penghargaan    Float    @default(0)
 
-  @@index([status], map: "status")
-  @@index([kategori], map: "kategori")
-  @@index([id_karyawan], map: "id_karyawan")
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model status {
-  id_status                        Int        @id @default(autoincrement()) @db.MediumInt
-  nama_status                      String     @db.VarChar(255)
-  gaji_pokok                       Float
-  keterangan                       String?    @db.Text
-  karyawan_karyawan_statusTostatus karyawan[] @relation("karyawan_statusTostatus")
+  id_status   Int     @default(autoincrement()) @db.MediumInt
+  nama_status String  @db.VarChar(255)
+  gaji_pokok  Float
+  keterangan  String? @db.Text
 
-  @@index([id_status], map: "id_status")
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model unit_kerja {
-  id_unit_kerja                                            Int                @id @default(autoincrement()) @db.MediumInt
-  nama_unit_kerja                                          String             @db.Text
-  keterangan                                               String?            @db.Text
-  jabatan_karyawan_jabatan_karyawan_unit_kerjaTounit_kerja jabatan_karyawan[] @relation("jabatan_karyawan_unit_kerjaTounit_kerja")
+  id_unit_kerja   Int     @default(autoincrement()) @db.MediumInt
+  nama_unit_kerja String  @db.Text
+  keterangan      String? @db.Text
+
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model master_tugas {
-  id_tugas                                                                 BigInt           @id @default(autoincrement())
-  judul_tugas                                                              String           @db.Text
-  deskripsi_tugas                                                          String?          @db.Text
-  ket_revisi                                                               String?          @db.Text
-  id_kepala_biro                                                           Int
-  id_jabatan_pimpinan_unit                                                 Int
-  deadline                                                                 DateTime         @db.Date
-  status                                                                   Int              @default(1) @db.MediumInt
-  lampiran                                                                 String?          @db.VarChar(255)
-  file_hasil                                                               String?          @db.VarChar(100)
-  created_at                                                               DateTime         @default(now()) @db.Date
-  history_status                                                           history_status[]
-  jabatan_karyawan_master_tugas_id_jabatan_pimpinan_unitTojabatan_karyawan jabatan_karyawan @relation("master_tugas_id_jabatan_pimpinan_unitTojabatan_karyawan", fields: [id_jabatan_pimpinan_unit], references: [id_jabatan_karyawan], onUpdate: Restrict, map: "master_tugas_ibfk_1")
-  jabatan_karyawan_master_tugas_id_kepala_biroTojabatan_karyawan           jabatan_karyawan @relation("master_tugas_id_kepala_biroTojabatan_karyawan", fields: [id_kepala_biro], references: [id_jabatan_karyawan], onUpdate: Restrict, map: "master_tugas_ibfk_2")
+  id_tugas                 BigInt   @default(autoincrement())
+  judul_tugas              String   @db.Text
+  deskripsi_tugas          String?  @db.Text
+  ket_revisi               String?  @db.Text
+  id_kepala_biro           Int
+  id_jabatan_pimpinan_unit Int
+  deadline                 DateTime @db.Date
+  status                   Int      @default(1) @db.MediumInt
+  lampiran                 String?  @db.VarChar(255)
+  file_hasil               String?  @db.VarChar(100)
+  created_at               DateTime @default(now()) @db.Date
 
-  @@index([id_jabatan_pimpinan_unit], map: "id_jabatan_pimpinan_unit")
-  @@index([id_kepala_biro], map: "id_unit_kerja")
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model history_status {
-  id_history   Int          @id @default(autoincrement())
+  id_history   Int      @default(autoincrement())
   id_tugas     BigInt
-  status_tugas Int          @default(1) @db.MediumInt
-  keterangan   String?      @db.Text
-  hasil_tugas  String?      @db.VarChar(100)
-  created_at   DateTime     @default(now()) @db.Date
-  master_tugas master_tugas @relation(fields: [id_tugas], references: [id_tugas], onUpdate: Restrict, map: "history_status_ibfk_1")
+  status_tugas Int      @default(1) @db.MediumInt
+  keterangan   String?  @db.Text
+  hasil_tugas  String?  @db.VarChar(100)
+  created_at   DateTime @default(now()) @db.Date
 
-  @@index([id_tugas], map: "id_tugas")
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model kepalabiro {
-  id_kepalabiro BigInt  @id @default(autoincrement())
+  id_kepalabiro BigInt  @default(autoincrement())
   id_unit_kerja Int     @db.MediumInt
   keterangan    String? @db.Text
+
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model kategori_karyawan {
-  id_kategori   Int        @id @db.MediumInt
-  nama_kategori String     @db.VarChar(50)
-  karyawan      karyawan[]
+  id_kategori   Int    @db.MediumInt
+  nama_kategori String @db.VarChar(50)
 
-  @@index([id_kategori], map: "id_kategori")
+  @@ignore
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model kontrak {
-  id_kontrak        Int      @id @default(autoincrement())
+  id_kontrak        Int      @default(autoincrement())
   id_karyawan       BigInt
   no_sk             String   @db.VarChar(50)
   tgl_kontrak       DateTime @db.Date
   tgl_habis_kontrak DateTime @db.Date
   jenis_kontrak     Int      @default(1) @db.MediumInt
   status            Int      @default(1) @db.MediumInt
-  karyawan          karyawan @relation(fields: [id_karyawan], references: [id_karyawan], onUpdate: Restrict, map: "kontrak_ibfk_1")
+  ket_kontrak       String?  @db.VarChar(100)
 
-  @@index([id_karyawan], map: "id_karyawan")
+  @@ignore
 }
